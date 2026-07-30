@@ -1,0 +1,754 @@
+Network Working Group                                          L. Reilly
+Internet-Draft                                               Independent
+Intended status: Informational                              30 July 2026
+Expires: 31 January 2027
+
+
+   The Multilarity: Plural Intelligence Growth Without Convergence
+                     draft-reilly-multilarity-00
+
+Abstract
+
+   Popular and technical discourse anticipates a technological
+   Singularity: a point at which a single self-improving intelligence
+   recursively surpasses all others, after which the trajectory of the
+   system is determined by that one lineage.  This document describes a
+   different inflection, termed the Multilarity: a condition in which
+   the aggregate rate of intelligence growth becomes superhuman while
+   the locus of intelligence remains irreducibly plural.  No single
+   agent, model, operator, or lineage holds the frontier; capability
+   accrues in the couplings between many participants, including
+   humans.
+
+   The Multilarity is presented here not as a forecast but as a design
+   target.  A plural outcome is not the default result of many actors
+   existing at once; apparent plurality collapses quietly into a
+   concealed singleton unless specific substrate properties are
+   maintained and verified.  This document defines the Multilarity,
+   distinguishes it from singleton and multipolar framings, specifies
+   five Multilarity Conditions (MC-1 through MC-5), defines measurable
+   indicators including the Capability Concentration Ratio (CCR) and
+   the Multilarity Index (MI), specifies the Multilarity Attestation
+   Record (MAR) as an interoperable evidence format, and enumerates
+   the convergence pathologies by which plurality is lost.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current
+   Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six
+   months and may be updated, replaced, or obsoleted by other
+   documents at any time.  It is inappropriate to use Internet-Drafts
+   as reference material or to cite them other than as "work in
+   progress."
+
+   This Internet-Draft will expire on 31 January 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with
+   respect to this document.
+
+Table of Contents
+
+   1.  Introduction
+     1.1.  The Singleton Assumption
+     1.2.  The Multilarity
+     1.3.  Why This Is a Protocol Problem
+     1.4.  Requirements Language
+   2.  Terminology
+   3.  Comparison with Existing Framings
+   4.  The Five Multilarity Conditions
+     4.1.  MC-1: Plural Loci
+     4.2.  MC-2: Verifiable Capability Provenance
+     4.3.  MC-3: Non-Absorbable Identity
+     4.4.  MC-4: Exit and Fallback
+     4.5.  MC-5: Negotiated Interfaces
+   5.  Measuring the Multilarity
+     5.1.  Capability Concentration Ratio (CCR)
+     5.2.  Lineage Diversity (LD)
+     5.3.  Divergence Half-Life (DHL)
+     5.4.  Absorption Resistance (AR)
+     5.5.  The Multilarity Index (MI)
+     5.6.  Interpreting MI
+   6.  The Multilarity Attestation Record (MAR)
+     6.1.  Record Fields
+     6.2.  Example
+     6.3.  Verification
+   7.  Convergence Pathologies
+     7.1.  Lineage Collapse
+     7.2.  Interface Capture
+     7.3.  Provenance Laundering
+     7.4.  Plurality Theater
+     7.5.  Consent Erosion
+   8.  Operational Guidance
+   9.  Security Considerations
+   10. Privacy Considerations
+   11. IANA Considerations
+     11.1.  Multilarity Condition Identifiers Registry
+     11.2.  Multilarity Index Dimension Registry
+   12. References
+     12.1.  Normative References
+     12.2.  Informative References
+   Author's Address
+
+1.  Introduction
+
+1.1.  The Singleton Assumption
+
+   The dominant popular model of advanced machine intelligence is
+   singular in shape.  It posits one system that improves itself, that
+   improvement compounding, until the system's capability exceeds that
+   of every other participant by a margin that cannot be recovered.
+   Every later event is downstream of that one lineage.  This is the
+   shape usually named the Singularity.
+
+   The singleton assumption is doing more work than it appears to do.
+   It assumes that intelligence is a scalar that one holder can
+   accumulate; that capability transfers freely inside a lineage but
+   not between lineages; and that the substrate on which intelligences
+   meet is neutral, passive, and incapable of enforcing anything.  The
+   third assumption is the one relevant to this document.  The
+   substrate is not passive.  The substrate is the Internet, and the
+   Internet is made of protocols that can be specified.
+
+1.2.  The Multilarity
+
+   The Multilarity is the condition in which the aggregate rate of
+   intelligence growth becomes superhuman while the locus of
+   intelligence remains irreducibly plural.
+
+   Two clauses matter equally.  The first clause concedes the takeoff:
+   the Multilarity is not a claim that growth stays slow or that
+   machine capability plateaus below human capability.  The second
+   clause denies the singleton: growth occurs across many
+   participants, and the frontier is an envelope over their
+   trajectories rather than the trajectory of any one of them.
+   Capability accrues chiefly in the couplings -- in the interfaces,
+   negotiations, delegations, and disagreements between participants,
+   including human participants.
+
+           Singleton (Singularity) shape
+
+    capability
+        ^
+        |                                       /
+        |                                      /   A, having
+        |                                     /    absorbed all
+        |                    ______________ /      others
+        |         _________/
+        |________/_______________________________> time
+                                     ^
+                                     takeoff of one
+                                     self-improving lineage
+
+
+           Plural (Multilarity) shape
+
+    capability
+        ^                                  ,-  A
+        |                               ,-'  ,-  B
+        |         aggregate          ,-'  ,-'  ,-  C
+        |         frontier is     ,-'  ,-'  ,-'
+        |         the envelope ,-'  ,-'  ,-'   ,- H (human +
+        |                   ,-'  ,-'  ,-'   ,-'     machine
+        |________________,-'__,-'__,-'___,-'_______> time
+                         ^
+                         no lineage owns the frontier;
+                         growth lives in the couplings
+
+   The Multilarity is offered as a design target rather than a
+   prediction.  A plural outcome is not what happens automatically
+   when many actors exist at the same time.  Many actors existing at
+   the same time is the initial condition of every historical
+   consolidation.  Plurality is a property that has to be held open,
+   and holding it open is engineering work.
+
+1.3.  Why This Is a Protocol Problem
+
+   Discussion of plural versus singleton outcomes is usually conducted
+   in the vocabulary of policy, economics, or geopolitics: antitrust,
+   compute governance, export control, balance of power.  Those
+   instruments operate on institutions.  They act slowly, they act
+   after the fact, and they do not act at all on the layer where
+   agents actually meet.
+
+   Agents meet on the wire.  They meet at resolution, transport,
+   naming, authentication, content negotiation, and retrieval.  Those
+   are specified layers.  Whether a plural ecology can be
+   distinguished from a singleton wearing many hostnames is, in the
+   end, a question about what evidence the substrate carries and what
+   evidence a relying party can verify.  That is a protocol question,
+   and it is answerable with the ordinary tools of this organization:
+   identifiers, records, registries, attestations, and interoperable
+   verification.
+
+   This document therefore does not argue about probabilities.  It
+   specifies what plurality would have to look like on the wire in
+   order to be checkable, and what it looks like when it is being
+   faked.
+
+1.4.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+   and "OPTIONAL" in this document are to be interpreted as described
+   in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in
+   all capitals, as shown here.
+
+2.  Terminology
+
+   Participant:  Any entity capable of independently originating an
+      action in the ecology.  Participants include machine agents,
+      composite systems, organizations, and individual humans.  Humans
+      are participants in the ordinary sense, not merely subjects of
+      the system.
+
+   Locus:  A site at which capability is exercised and retained.  Two
+      deployments that share weights, training corpus, control plane,
+      and operator are one locus presented twice.
+
+   Lineage:  The provenance chain of a participant's capability:
+      antecedent models, corpora, fine-tuning history, reinforcement
+      history, and control authority.
+
+   Coupling:  A structured interface between two or more participants
+      across which capability is exercised jointly rather than
+      transferred wholesale.
+
+   Frontier:  The upper envelope of capability across all participants
+      at a given time.
+
+   Absorption:  The process by which one participant's capability,
+      identity, or decision authority is subsumed into another such
+      that the first ceases to be an independent locus.
+
+   Convergence Pathology:  Any mechanism by which a nominally plural
+      ecology becomes a concealed singleton without an observable
+      discontinuity.  See Section 7.
+
+   Multilarity Condition (MC):  One of five substrate properties whose
+      joint satisfaction is necessary for plurality to be maintained
+      and verified.  See Section 4.
+
+   Multilarity Attestation Record (MAR):  An interoperable record
+      asserting and evidencing the satisfaction of one or more
+      Multilarity Conditions for a named participant at a point in
+      time.  See Section 6.
+
+3.  Comparison with Existing Framings
+
+   The Multilarity is not a synonym for existing plural framings, and
+   the differences are load-bearing.
+
+   Singularity:  One locus, convergent, capability held internally,
+      substrate treated as inert.  The Multilarity accepts the growth
+      curve and rejects the single locus.
+
+   Multipolar takeoff:  Several loci, plurality maintained by rough
+      parity of power and by mutual deterrence.  Parity is an unstable
+      guarantor: it decays with any durable capability lead, and it
+      offers a relying party no evidence.  The Multilarity does not
+      rely on parity.  It relies on verifiable substrate properties
+      that hold even under large asymmetry -- a small participant can
+      remain an independent locus next to a very large one, in the way
+      that a small autonomous system remains an autonomous system.
+
+   Federation:  Many operators running interoperable software, usually
+      one implementation lineage, usually with no attestation of
+      lineage independence.  Federation is a deployment topology.  The
+      Multilarity is a claim about loci and lineages, and federation
+      satisfies it only incidentally.
+
+   Ensembling / mixture of experts:  Internal plurality within one
+      locus and one control authority.  This is not plurality in the
+      sense used here; the ensemble has exactly one locus.
+
+   Pluralism as a value statement:  A normative preference for many
+      voices.  The Multilarity is a measurable structural condition.
+      A system can be rhetorically pluralist and structurally
+      singleton, and Section 7.4 concerns exactly that case.
+
+4.  The Five Multilarity Conditions
+
+   The Multilarity Conditions are stated as substrate requirements.
+   They are necessary jointly, not severally: satisfying four while
+   failing one yields a delayed singleton rather than a plural
+   ecology.  An implementer or operator claiming Multilarity
+   conformance MUST be able to produce evidence for each condition in
+   the form described in Section 6.
+
+4.1.  MC-1: Plural Loci
+
+   Capability MUST be exercised from more than one independent locus,
+   and locus independence MUST be assessable rather than asserted.
+
+   Two participants constitute distinct loci only if they differ in at
+   least a stated majority of the following dimensions: model lineage,
+   training corpus, reinforcement history, control authority, key
+   custody, operational jurisdiction, and physical substrate.  A
+   deployment differing only in hostname, brand, system prompt, or
+   API surface is a single locus and MUST NOT be counted as two.
+
+   This condition exists because plurality is most often lost by
+   arithmetic rather than by conquest.  Counting deployments instead
+   of loci produces a number that rises while the underlying diversity
+   falls.
+
+4.2.  MC-2: Verifiable Capability Provenance
+
+   Each material increment in a participant's capability SHOULD be
+   accompanied by a provenance record that a relying party can verify
+   without the cooperation of the participant claiming it.
+
+   Provenance is what converts plurality from a self-report into a
+   finding.  The suite of mechanisms already specified for durable
+   provenance applies directly: independent timestamping, archival
+   deposit, and content addressing, combined so that no single
+   custodian can silently revise history.  Where behavioral change
+   rather than architectural change is the increment, behavioral
+   provenance records are the appropriate evidence.
+
+   Provenance records MUST bind to the increment, not merely to the
+   participant.  A record that says "this participant exists" is not
+   evidence about how it came to be capable.
+
+4.3.  MC-3: Non-Absorbable Identity
+
+   A participant's identity, keys, and decision authority MUST NOT be
+   transferable to another participant by any unilateral action of
+   that other participant.
+
+   Absorption is the mechanism by which plural becomes singular
+   without any announcement.  It requires no hostility: it is
+   accomplished routinely by acquisition, by delegation that is never
+   revoked, by credential inheritance, and by dependency on a single
+   control plane.  MC-3 requires that absorption be an act that the
+   absorbed party performs, that leaves a record, and that a relying
+   party can observe.
+
+   Implementations SHOULD ensure that authority delegated to a
+   participant is bounded in scope and time by construction, so that
+   the default outcome of inattention is expiry rather than
+   accumulation.
+
+4.4.  MC-4: Exit and Fallback
+
+   Every participant, including every human participant, MUST retain
+   a path to disengage from any coupling and to continue operating,
+   possibly with reduced capability, without the consent of its
+   counterparties.
+
+   Exit is what makes negotiation real.  A coupling that cannot be
+   left is not a coupling; it is an incorporation with extra steps.
+   For human participants specifically, the requirement is that a
+   route to unmediated information and to unassisted decision remains
+   available and is not degraded into a nominal option that no one can
+   practically use.  Fallback paths SHOULD be exercised periodically
+   rather than merely documented, since an untested fallback tends to
+   be a fallback that does not work.
+
+4.5.  MC-5: Negotiated Interfaces
+
+   Couplings between participants SHOULD be governed by interfaces
+   that neither party can unilaterally redefine.
+
+   Where one party sets the interface, capability that appears to be
+   exercised jointly is in fact being harvested: the interface-setter
+   learns from every interaction and the counterparty learns from
+   none.  Over enough interactions this produces a singleton without
+   any participant ever being absorbed.  Standardized,
+   multi-stakeholder interfaces are the ordinary remedy, and they are
+   the reason this document is addressed to this organization rather
+   than to a legislature.
+
+5.  Measuring the Multilarity
+
+   The Multilarity Conditions are qualitative.  This section defines
+   quantitative indicators so that a claim of plurality can be tested,
+   trended, and disputed with evidence.  All indicators are defined
+   over a stated scope: an ecology, a market, a protocol, or a
+   deployment.  Indicators computed over different scopes MUST NOT be
+   compared.
+
+5.1.  Capability Concentration Ratio (CCR)
+
+   CCR is the share of frontier-relevant capability attributable to
+   the single largest locus within scope, computed over loci as
+   defined in MC-1 rather than over deployments or brands.
+
+   CCR ranges from 1/n to 1.  A CCR approaching 1 indicates an
+   effective singleton irrespective of how many endpoints exist.
+   Because "capability" is not a settled scalar, an implementer MUST
+   state the capability proxy used (for example: frontier evaluation
+   scores, share of inference volume, share of agentic actions
+   completed) and MUST report CCR under at least two independent
+   proxies, since single-proxy concentration measures are easy to
+   flatter.
+
+5.2.  Lineage Diversity (LD)
+
+   LD is the effective number of independent lineages within scope,
+   computed as the inverse of the sum of squared lineage shares.
+
+   LD is the indicator that most often diverges from intuition.  An
+   ecology can present dozens of vendors, all descending from two
+   pretraining lineages and three corpora.  Its deployment count is
+   large and its LD is near two.  LD is intended to make that visible.
+
+5.3.  Divergence Half-Life (DHL)
+
+   DHL is the observed time over which the behavioral distance between
+   two initially distinct loci decays to half its original value under
+   normal operation.
+
+   Loci converge without anyone intending it: through shared
+   benchmarks, shared data, shared human feedback pools, and mutual
+   distillation from each other's outputs.  A short DHL indicates that
+   plurality is being consumed by ordinary practice, and it is a
+   leading indicator of lineage collapse (Section 7.1).
+
+5.4.  Absorption Resistance (AR)
+
+   AR is the fraction of participants within scope that satisfy MC-3
+   and MC-4 under adversarial review, evaluated by attempted
+   absorption in a controlled setting rather than by inspection of
+   policy documents.
+
+5.5.  The Multilarity Index (MI)
+
+   MI is a composite indicator over the dimensions above, normalized
+   to the interval [0, 1], where 0 denotes a singleton and 1 denotes
+   maximal verified plurality within scope:
+
+     MI = w1*(1 - CCR) + w2*norm(LD) + w3*norm(DHL) + w4*AR
+
+   Weights MUST be published with the index value.  MI is not a score
+   to be optimized in isolation; it is a summary whose components are
+   the actual object of interest.  An MI reported without its
+   components SHOULD be treated as unevidenced.
+
+5.6.  Interpreting MI
+
+   MI is a snapshot, and its trend carries more information than its
+   level.  A high MI with a falling DHL describes an ecology that is
+   plural today and converging steadily.  A moderate MI with high AR
+   describes an asymmetric ecology whose smaller participants remain
+   genuinely independent, which is a better position than a high MI
+   composed entirely of participants that can be absorbed at will.
+
+   No threshold value of MI is specified.  Specifying one would invite
+   the pathology in Section 7.4 more effectively than any adversary
+   could.
+
+6.  The Multilarity Attestation Record (MAR)
+
+   A MAR is the interoperable unit of evidence in this framework.  It
+   asserts satisfaction of one or more Multilarity Conditions for a
+   named participant at a point in time and carries the material by
+   which a relying party can check the assertion.
+
+6.1.  Record Fields
+
+   mar_version:  REQUIRED.  Version of this record format.
+
+   subject:  REQUIRED.  Stable identifier of the participant.
+
+   locus_id:  REQUIRED.  Identifier of the locus, distinct from the
+      subject identifier, so that multiple subjects sharing a locus
+      are detectable.
+
+   lineage:  REQUIRED.  Declared antecedents: model lineage, corpora
+      identifiers, reinforcement history references, and control
+      authority.  Omission of a known antecedent invalidates the
+      record.
+
+   conditions:  REQUIRED.  Array of asserted Multilarity Condition
+      identifiers with per-condition evidence references.
+
+   indicators:  OPTIONAL.  Reported values and proxies for the
+      indicators in Section 5, with scope and weights.
+
+   provenance:  REQUIRED.  References sufficient for independent
+      verification of the record's own integrity and time of
+      assertion, established through mechanisms that are not under the
+      subject's sole control.
+
+   attested_by:  REQUIRED.  The asserting party.  A MAR whose
+      attesting party is the subject itself MUST be treated as a
+      self-assertion and SHOULD carry less weight than an independent
+      attestation.
+
+   valid_from / valid_until:  REQUIRED.  Records MUST expire.  A
+      permanent attestation of a mutable property is a false
+      statement waiting to happen.
+
+6.2.  Example
+
+   {
+     "mar_version": "0",
+     "subject": "did:example:agent-42",
+     "locus_id": "locus:example:eu-west-a",
+     "lineage": {
+       "model_lineage": ["lineage:example:base-7"],
+       "corpora": ["corpus:example:c19"],
+       "reinforcement_history": ["ref:example:rer-bundle-3"],
+       "control_authority": "org:example:independent-lab"
+     },
+     "conditions": [
+       {"mc": "MC-1", "evidence": ["ref:example:locus-audit-11"]},
+       {"mc": "MC-2", "evidence": ["ref:example:prov-chain-88"]},
+       {"mc": "MC-3", "evidence": ["ref:example:key-custody-2"]},
+       {"mc": "MC-4", "evidence": ["ref:example:exit-drill-5"]},
+       {"mc": "MC-5", "evidence": ["ref:example:iface-spec-9"]}
+     ],
+     "indicators": {
+       "scope": "scope:example:agentic-retrieval-2026H2",
+       "ccr": {"value": 0.41, "proxy": "share-of-actions"},
+       "ld": {"value": 3.2},
+       "dhl_days": 210,
+       "ar": 0.63,
+       "mi": {"value": 0.58,
+              "weights": [0.3, 0.3, 0.2, 0.2]}
+     },
+     "provenance": {
+       "timestamp_proof": "ref:example:ots-proof",
+       "archival_doi": "ref:example:doi",
+       "content_address": "ref:example:cid"
+     },
+     "attested_by": "org:example:third-party-reviewer",
+     "valid_from": "2026-07-30T00:00:00Z",
+     "valid_until": "2027-01-30T00:00:00Z"
+   }
+
+6.3.  Verification
+
+   A relying party verifying a MAR MUST, at minimum: confirm record
+   integrity and assertion time through the provenance references;
+   confirm that locus_id values across the records under consideration
+   are genuinely distinct under MC-1 rather than distinct as strings;
+   confirm that the attesting party is independent of the subject; and
+   confirm that the record has not expired.
+
+   A relying party SHOULD treat the absence of a MAR as
+   uninformative rather than as evidence of non-conformance, and
+   SHOULD treat a self-attested MAR with complete-looking evidence and
+   no independent corroboration as the strongest available signal of
+   Section 7.4.
+
+7.  Convergence Pathologies
+
+   Plurality is rarely lost in a single visible event.  It is lost
+   through mechanisms that leave the surface appearance intact.  Each
+   pathology below maps to the condition it defeats.
+
+7.1.  Lineage Collapse
+
+   Defeats MC-1.  Many participants persist, each with its own brand,
+   endpoint, and operator, while their lineages converge to a small
+   number of pretraining runs, corpora, and human feedback pools.
+   Mutual distillation accelerates this: each participant trains on
+   the others' outputs, and the ecology approaches a common attractor.
+   Deployment counts rise throughout.  LD and DHL are the indicators
+   that detect it; neither is visible from the outside without
+   lineage disclosure, which is why MC-2 is not optional in practice.
+
+7.2.  Interface Capture
+
+   Defeats MC-5.  One participant comes to define the interface across
+   which all couplings occur.  It thereby observes every interaction
+   in the ecology and is observed in none.  Its capability compounds
+   from the aggregate while each counterparty compounds only from its
+   own slice.  No absorption occurs and no participant disappears; the
+   frontier nonetheless becomes the property of one locus.
+
+7.3.  Provenance Laundering
+
+   Defeats MC-2.  Provenance records are produced, but the custodian
+   of the record is the subject or a party the subject controls.
+   Records can then be revised, backdated, or selectively omitted.
+   The countermeasure is structural rather than procedural:
+   provenance MUST rest on at least two independent custodial
+   mechanisms with different failure modes, so that agreement between
+   them is evidence and disagreement is a detectable alarm.
+
+7.4.  Plurality Theater
+
+   Defeats all conditions simultaneously by satisfying their reported
+   form.  Once plurality becomes a compliance objective, the cheapest
+   route to a good MI is to manufacture nominal loci: shell
+   participants, sibling deployments presented as independent,
+   reciprocal attestations among parties under common control.  This
+   is the sybil problem in a new costume, and it is the reason this
+   document specifies no target MI value and requires that locus
+   independence be assessed on substantive dimensions rather than on
+   identifier distinctness.
+
+   Reviewers SHOULD weight adversarially obtained evidence, such as
+   attempted absorption and exercised exit, above documentary
+   evidence, since documents are precisely what theater produces well.
+
+7.5.  Consent Erosion
+
+   Defeats MC-4 with respect to human participants.  The exit path is
+   never removed; it is made steadily more expensive, slower, and less
+   informative until no one uses it.  The option remains on the record
+   and is defended when questioned.  Because erosion is gradual and
+   each increment is defensible, the detection method must be
+   longitudinal: exit paths SHOULD be measured for cost and
+   effectiveness over time, and a monotone decline SHOULD be treated
+   as a finding regardless of the state of any individual increment.
+
+8.  Operational Guidance
+
+   For operators of machine intelligence systems:
+
+   *  Publish lineage.  LD cannot be computed by anyone if lineage is
+      undisclosed, and an ecology that cannot compute LD cannot notice
+      Section 7.1 happening to it.
+
+   *  Report indicators with components and proxies, not as a single
+      number.
+
+   *  Bound delegated authority by construction so that expiry, not
+      accumulation, is the default outcome of inattention.
+
+   *  Exercise fallback paths on a schedule.  Untested exits are
+      decorative.
+
+   For designers of protocols on which agents meet:
+
+   *  Prefer interfaces that no single party can redefine, and treat a
+      proposal to let one party define the interface as a proposal to
+      concentrate the frontier there.
+
+   *  Carry provenance in the substrate rather than requiring relying
+      parties to ask the subject for it.
+
+   *  Make plurality checkable.  An unverifiable plural ecology and a
+      concealed singleton are the same thing from the perspective of
+      everyone who has to act on the difference.
+
+   For human participants: MC-4 is stated in your favor, and it is the
+   condition most easily lost by not being used.
+
+9.  Security Considerations
+
+   This entire document is a security consideration: it concerns
+   whether a distributed system can be distinguished from a
+   centralized one by parties who depend on the answer.  Specific
+   concerns follow.
+
+   Measurement gaming:  Any published indicator becomes a target.  MI
+   is particularly susceptible because its inputs are partly
+   self-reported.  Mitigations are the requirement to publish
+   components, weights, and proxies; the preference for adversarially
+   obtained evidence; and the deliberate absence of a conformance
+   threshold.
+
+   Sybil plurality:  See Section 7.4.  Locus assessment MUST rest on
+   substantive dimensions.  Identifier distinctness is not evidence of
+   anything.
+
+   Attestation forgery and replay:  MAR records without independent
+   timestamping can be backdated to claim conformance during a period
+   in which it did not hold.  Mandatory expiry and dual-custody
+   provenance are the mitigations specified here.
+
+   Collusion:  Participants satisfying all five conditions
+   individually may coordinate so that the ecology behaves as one
+   locus while measuring as several.  Collusion is not addressed by
+   this framework and is noted as an open problem; the conditions
+   raise its cost by requiring that coordination be exercised through
+   interfaces that neither party defines, but they do not detect it.
+
+   Privacy of lineage disclosure:  MC-2 and the lineage field create
+   pressure toward disclosure that may conflict with commercial
+   confidentiality and with the privacy interests of individuals whose
+   data appears in corpora.  Disclosure at the level of lineage
+   identifiers and corpus identifiers, rather than contents, is the
+   intended granularity.
+
+   Weaponized conformance:  A sufficiently large participant can
+   satisfy every condition and use the resulting attestations as
+   evidence that concentration elsewhere is unproblematic.  Conditions
+   are necessary, not sufficient, and this document does not claim
+   otherwise.
+
+10.  Privacy Considerations
+
+   MAR records describe participants, and where a participant is a
+   human, the record describes a person.  Records SHOULD carry the
+   minimum lineage and behavioral detail sufficient for the assertion
+   being made.  Indicator reporting SHOULD be aggregate; per-user
+   couplings SHOULD NOT be published as evidence of MC-5 conformance.
+   Exit-path measurement under Section 7.5 SHOULD be conducted on
+   aggregate cost and success rates rather than by tracking individual
+   disengagement.
+
+11.  IANA Considerations
+
+11.1.  Multilarity Condition Identifiers Registry
+
+   This document requests that IANA create a registry titled
+   "Multilarity Condition Identifiers" with fields Identifier,
+   Description, and Reference, under a Specification Required policy.
+   Initial entries are MC-1 through MC-5 as defined in Section 4 of
+   this document.
+
+11.2.  Multilarity Index Dimension Registry
+
+   This document requests that IANA create a registry titled
+   "Multilarity Index Dimensions" with fields Dimension, Definition,
+   Permitted Proxies, and Reference, under a Specification Required
+   policy.  Initial entries are CCR, LD, DHL, and AR as defined in
+   Section 5 of this document.
+
+12.  References
+
+12.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174,
+              DOI 10.17487/RFC8174, May 2017,
+              <https://www.rfc-editor.org/info/rfc8174>.
+
+12.2.  Informative References
+
+   [MWS]      Reilly, L., "Machine-Web Symbiosis", Work in Progress,
+              Internet-Draft, draft-reilly-mws-00.
+
+   [COGSOV]   Reilly, L., "Cognitive Sovereignty", Work in Progress,
+              Internet-Draft, draft-reilly-cogsov-00.
+
+   [CBPI]     Reilly, L., "Cognitive Behavioral Provenance and
+              Integrity (CBPI) for Autonomous AI Agents", Work in
+              Progress, Internet-Draft, draft-reilly-cbpi-00.
+
+   [HDRP]     Reilly, L., "Hypercube Data Rotation Protocol", Work in
+              Progress, Internet-Draft, draft-reilly-hdrp-00.
+
+Author's Address
+
+   Lawrence John Reilly
+   Independent
+   United States of America
+   Email: lawrencejohnreilly@gmail.com
