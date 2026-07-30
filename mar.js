@@ -37,9 +37,16 @@ function issue(eco, pipeline, head) {
         scope: pipeline.index.scope,
         ccr: { value: pipeline.index.ccr, proxies: pipeline.index.ccrProxies },
         ld: { value: pipeline.index.ld },
-        dhl_days: pipeline.index.dhl,
+        dhl_days: pipeline.index.dhlDays,
+        dhl_status: pipeline.index.dhlStatus,
         ar: pipeline.index.ar,
-        mi: { value: pipeline.index.mi, weights: pipeline.index.weights },
+        mi: {
+          value: pipeline.index.mi,
+          weights: pipeline.index.weights,
+          applied_weights: pipeline.index.appliedWeights,
+          terms: pipeline.index.terms,
+          omitted: pipeline.index.omitted,
+        },
       },
       provenance: {
         chain_head: head,

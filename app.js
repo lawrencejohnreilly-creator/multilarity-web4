@@ -155,9 +155,10 @@ function render(state) {
     document.getElementById('vLd').textContent = ix.ld.toFixed(2);
     document.getElementById('bLd').style.width = pct(Math.min(ix.ld / 6, 1));
 
-    document.getElementById('vDhl').textContent = ix.dhl >= 999 ? '∞' : Math.round(ix.dhl);
+    document.getElementById('vDhl').textContent =
+      ix.dhlStatus === 'measured' ? Math.round(ix.dhlDays) : '—';
     document.getElementById('sDhl').textContent = div ? `distance ${div.distance} · ${div.trend}` : '';
-    document.getElementById('bDhl').style.width = pct(Math.min(ix.dhl / 365, 1));
+    document.getElementById('bDhl').style.width = pct(ix.terms.dhl === null ? 0 : ix.terms.dhl);
 
     document.getElementById('vAr').textContent = ix.ar.toFixed(2);
     document.getElementById('bAr').style.width = pct(ix.ar);
@@ -198,7 +199,7 @@ function render(state) {
           : a.agent === 'LINEAGE-MONITOR'
           ? `LD ${a.ld.toFixed(2)}`
           : a.agent === 'DIVERGENCE-TRACKER'
-          ? `DHL ${a.dhl >= 999 ? '∞' : Math.round(a.dhl)}d`
+          ? `DHL ${a.dhlStatus === 'measured' ? Math.round(a.dhlDays) + 'd' : a.dhlStatus}`
           : a.agent === 'ABSORPTION-PROBER'
           ? `AR ${a.ar.toFixed(2)}`
           : a.agent === 'INTERFACE-WARDEN'

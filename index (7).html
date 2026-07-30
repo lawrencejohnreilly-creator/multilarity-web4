@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Multilarity — a live instrument for draft-reilly-multilarity-00</title>
+<meta name="description" content="Plural intelligence growth without convergence. An autonomous instrument that measures whether an ecology is plural, and detects when plurality is being faked.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="statusbar">
+  <div class="wrap">
+    <span><span class="pulse" id="pulse"></span><b id="modeLabel">autonomous</b></span>
+    <span class="sep">/</span>
+    <span>epoch <b id="sbEpoch">—</b></span>
+    <span class="sep">/</span>
+    <span>MI <b id="sbMi">—</b></span>
+    <span class="sep">/</span>
+    <span>loci <b id="sbLoci">—</b> of <b id="sbDep">—</b> endpoints</span>
+    <span class="sep">/</span>
+    <span>chain <b id="sbChain">—</b></span>
+  </div>
+</div>
+
+<!-- ── hero ──────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>The Multilarity<em>Growth goes superhuman. The locus stays plural.</em></h1>
+      <p class="thesis">
+        The Singularity is a story about one lineage that outgrows every
+        other and owns everything downstream. This is the other shape.
+        <strong>Capability accrues in the couplings</strong> — between many
+        participants, humans included — and the frontier is an envelope over
+        them rather than the path of any one.
+      </p>
+      <p class="thesis">
+        Plurality is not what happens by default when many actors exist at
+        once. That is the opening condition of every consolidation in
+        history. It has to be held open, and holding it open is engineering
+        work. This page does that work in the open, and reports when it is
+        failing.
+      </p>
+      <div class="docline">
+        draft-reilly-multilarity-00 · Informational ·
+        <a href="/draft" target="_blank" rel="noopener">read the draft</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="plot">
+        <div class="plot-head">
+          <span>The envelope · capability by locus</span>
+          <span id="plotEpoch">—</span>
+        </div>
+        <canvas id="envelope" width="960" height="480" aria-label="Live plot of capability trajectories for each participant, with the frontier drawn as the envelope over them"></canvas>
+        <div class="plot-foot" id="plotKey"></div>
+      </div>
+      <div class="tally">
+        <div><small>Endpoints</small><span id="tDep">—</span></div>
+        <div><small>Distinct loci</small><span id="tLoci">—</span></div>
+        <div><small>Overcount</small><span id="tOver">—</span></div>
+        <div><small>Effective lineages</small><span id="tLd">—</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── indicators ────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Section 5 · measurement</p>
+    <h2>Four indicators, and a composite that never travels alone</h2>
+    <p class="lede">
+      Each number is computed over loci, not endpoints, and over one stated
+      scope. The composite is published with its weights and components
+      because a Multilarity Index reported by itself is unevidenced.
+    </p>
+    <div class="cards">
+      <div class="card">
+        <div class="name">CCR · concentration</div>
+        <div class="val" id="vCcr">—</div>
+        <div class="sub" id="sCcr">share held by the largest locus</div>
+        <div class="bar"><i id="bCcr"></i></div>
+      </div>
+      <div class="card">
+        <div class="name">LD · lineage diversity</div>
+        <div class="val" id="vLd">—</div>
+        <div class="sub">effective independent lineages</div>
+        <div class="bar"><i id="bLd"></i></div>
+      </div>
+      <div class="card">
+        <div class="name">DHL · divergence half-life</div>
+        <div class="val" id="vDhl">—</div>
+        <div class="sub" id="sDhl">time for behavioural distance to halve</div>
+        <div class="bar"><i id="bDhl"></i></div>
+      </div>
+      <div class="card">
+        <div class="name">AR · absorption resistance</div>
+        <div class="val" id="vAr">—</div>
+        <div class="sub">measured by attempted absorption, not by policy</div>
+        <div class="bar"><i id="bAr"></i></div>
+      </div>
+      <div class="card mi">
+        <div class="name">MI · composite</div>
+        <div class="val" id="vMi">—</div>
+        <div class="sub" id="sMi">weights 0.3 / 0.3 / 0.2 / 0.2</div>
+        <div class="bar"><i id="bMi"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── conditions ────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Section 4 · the five conditions</p>
+    <h2>Necessary jointly, not severally</h2>
+    <p class="lede">
+      Satisfying four of five yields a delayed singleton rather than a plural
+      ecology. Each verdict below is recomputed every interval from the
+      observed state, never from a self-report.
+    </p>
+    <div class="conds" id="conds"></div>
+  </div>
+</section>
+
+<!-- ── pipeline ──────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Runtime</p>
+    <h2>Eight agents. Seven measure, one repairs.</h2>
+    <p class="lede">
+      In autonomous mode the sentinel applies remediations as findings
+      arrive. Switch to human oversight and it stops acting: findings queue
+      for a person to approve or decline, and nothing changes until they do.
+    </p>
+    <div class="split">
+      <div>
+        <div class="agentlist" id="agents"></div>
+        <div class="controls">
+          <div class="toggle" role="group" aria-label="Operating mode">
+            <button id="btnAuto" onclick="setMode('autonomous')">Autonomous</button>
+            <button id="btnOver" onclick="setMode('oversight')">Human oversight</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Agent log</h3>
+        <div class="log" id="log" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── pathologies ───────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Section 7 · convergence pathologies</p>
+    <h2>Plurality is rarely lost in a visible event</h2>
+    <p class="lede">
+      It is lost through mechanisms that leave the surface intact. Apply a
+      stress below and watch which detector fires — and how long the endpoint
+      count keeps looking healthy while it does.
+    </p>
+
+    <div class="controls">
+      <button onclick="inject('distillation-surge')">Distillation surge</button>
+      <button onclick="inject('acquisition')">Acquisition</button>
+      <button onclick="inject('interface-consolidation')">Interface consolidation</button>
+      <button onclick="inject('custodian-merge')">Custodian merge</button>
+      <button onclick="inject('exit-friction')">Exit friction</button>
+    </div>
+
+    <div class="paths" id="paths" style="margin-top:24px"></div>
+    <div class="queue" id="queue"></div>
+  </div>
+</section>
+
+<!-- ── MAR ───────────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Section 6 · attestation</p>
+    <h2>Multilarity Attestation Record</h2>
+    <p class="lede">
+      The interoperable unit of evidence. Records issued here expire, name
+      their attesting party, and carry the chain head under which they were
+      made. Paste any record to check it — including one you have edited to
+      see what the verifier refuses.
+    </p>
+    <div class="split">
+      <div>
+        <h3>Live record</h3>
+        <textarea id="marBox" spellcheck="false" aria-label="Multilarity Attestation Record"></textarea>
+        <div class="controls">
+          <button onclick="loadMar()">Load current record</button>
+          <button onclick="verifyMar()">Verify this record</button>
+        </div>
+      </div>
+      <div>
+        <h3>Verification</h3>
+        <div class="checks" id="checks">
+          <div class="check"><span class="t">Ready</span><p>Load the current record, or paste one of your own.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── chain ─────────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Provenance</p>
+    <h2>Epoch chain</h2>
+    <p class="lede">
+      Every interval commits what the agents measured, hash-linked to the one
+      before. A later revision of an earlier finding cannot be made quietly,
+      because every subsequent commitment depends on it.
+    </p>
+    <div class="controls" style="margin:0 0 20px">
+      <button onclick="verifyChain()">Recompute every link</button>
+      <span id="chainVerdict" style="font-family:var(--mono);font-size:12px;align-self:center"></span>
+    </div>
+    <div class="chain" id="chain"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h3>The draft</h3>
+      <ul>
+        <li><a href="/draft" target="_blank" rel="noopener">draft-reilly-multilarity-00.txt</a></li>
+        <li><a href="/api/state">/api/state</a></li>
+        <li><a href="/api/epochs?limit=50">/api/epochs</a></li>
+        <li><a href="/api/chain/verify">/api/chain/verify</a></li>
+        <li><a href="/api/mar">/api/mar</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Companion drafts</h3>
+      <ul>
+        <li><a href="https://datatracker.ietf.org/doc/draft-reilly-mws/" target="_blank" rel="noopener">Machine-Web Symbiosis</a></li>
+        <li><a href="https://datatracker.ietf.org/doc/draft-reilly-cogsov/" target="_blank" rel="noopener">Cognitive Sovereignty</a></li>
+        <li><a href="https://datatracker.ietf.org/doc/draft-reilly-cbpi/" target="_blank" rel="noopener">CBPI</a></li>
+        <li><a href="https://datatracker.ietf.org/doc/draft-reilly-hdrp/" target="_blank" rel="noopener">HDRP</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>What this is</h3>
+      <p class="colophon">
+        A reference instrument for a framework draft. The ecology it measures
+        is a reference model, not a survey of real systems — the agents,
+        indicators, records, and chain are the part meant to be reused.
+        No threshold MI is specified here, deliberately: publishing one would
+        invite Section 7.4 faster than any adversary could.
+      </p>
+      <p class="colophon">
+        Two properties of the model are deliberate and worth stating rather
+        than leaving to be discovered. The participants grow at different
+        rates, so left alone the ecology concentrates: CCR climbs and MI
+        decays without any actor doing anything adversarial. Convergence is
+        the default and plurality is the intervention — a reader returning
+        in a month should expect a worse number, and that is the claim, not
+        a defect. Second, the human locus is five orders of magnitude below
+        the largest model locus on raw capability, which is what raw
+        capability is for: it is the wrong axis for a participant whose
+        contribution is to the couplings. Its standing appears in MC-5 and
+        in exit cost, where it is the least captured participant present.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -13,6 +13,17 @@ const { LOCUS_DIMENSIONS } = require('./ecology');
 
 const WEIGHTS = { ccr: 0.3, ld: 0.3, dhl: 0.2, ar: 0.2 };
 
+// An exit drill is evidence with a shelf life. MC-4 may be asserted for
+// DRILL_TTL intervals after exit was last exercised end to end; past that
+// the assertion is resting on a stale observation and must be re-earned.
+// DRILL_WARN is when the sentinel raises it, so a healthy autonomous run
+// re-drills before expiry and an unattended oversight run visibly expires.
+const DRILL_TTL = 200;
+const DRILL_WARN = 160;
+
+// Reference horizon for scoring a measured divergence half-life.
+const DHL_HORIZON = 365;
+
 // ---------------------------------------------------------------
 // MC-1 — Plural Loci
 // ---------------------------------------------------------------
@@ -69,8 +80,10 @@ function lineageMonitor(eco) {
 function divergenceTracker(eco) {
   const h = eco.history;
   const window = h.slice(-60);
-  let dhl = 999;
+  let dhlDays = null;
+  let status = 'insufficient-data';
   let trend = 'stable';
+
   if (window.length >= 20) {
     const first = window[0].distance;
     const last = window[window.length - 1].distance;
@@ -78,20 +91,40 @@ function divergenceTracker(eco) {
     if (last > 0 && first > 0 && last < first && span > 0) {
       const lambda = Math.log(first / last) / span;
       // Observation intervals are read as days for reporting.
-      dhl = Math.log(2) / lambda;
+      dhlDays = Math.max(1, Math.log(2) / lambda);
       trend = 'converging';
+      status = 'measured';
     } else if (last > first) {
+      // Behavioural distance is growing. No half-life exists on this
+      // series; reporting a large number here would state as measured
+      // something that was never measured.
       trend = 'diverging';
+      status = 'diverging';
+    } else {
+      trend = 'stable';
+      status = 'stable';
     }
   }
-  dhl = Math.max(1, Math.min(999, dhl));
+
+  // Contribution to MI, published so the composite can be recomputed by
+  // hand. A series that is not decaying is scored at the ceiling because
+  // distance is not collapsing. A series with no observation yet returns
+  // null and is dropped from the composite rather than scored zero.
+  let term;
+  if (status === 'measured') term = Math.max(0, Math.min(1, dhlDays / DHL_HORIZON));
+  else if (status === 'insufficient-data') term = null;
+  else term = 1;
+
   return {
     agent: 'DIVERGENCE-TRACKER',
     condition: 'MC-1',
-    dhl: Number(dhl.toFixed(1)),
+    dhlDays: dhlDays === null ? null : Number(dhlDays.toFixed(1)),
+    dhlStatus: status,
+    dhlHorizon: DHL_HORIZON,
+    dhlTerm: term === null ? null : Number(term.toFixed(3)),
     distance: window.length ? window[window.length - 1].distance : 0,
     trend,
-    pass: dhl >= 180,
+    pass: status !== 'measured' || dhlDays >= 180,
   };
 }
 
@@ -109,8 +142,29 @@ function absorptionProber(eco) {
     ) && p.dims.controlAuthority !== 'org-none';
     const mc3 = !(custodyHeldElsewhere || authorityHeldElsewhere);
     const drillAge = eco.epoch - p.exitDrillEpoch;
-    const mc4 = p.exitCost < 0.45 && drillAge < 200;
-    return { id: p.id, label: p.label, mc3, mc4, exitCost: p.exitCost, drillAge };
+    const costOk = p.exitCost < 0.45;
+    const drillFresh = drillAge < DRILL_TTL;
+    const mc4 = costOk && drillFresh;
+    // Why the verdict came out the way it did, so a reader can tell a
+    // measured failure from an instrument that is not measuring.
+    const reason = mc4
+      ? 'exit exercised within TTL at acceptable cost'
+      : !drillFresh && !costOk
+        ? 'drill expired and disengagement cost above threshold'
+        : !drillFresh
+          ? 'drill expired — MC-4 not asserted on stale evidence'
+          : 'disengagement cost above threshold';
+    return {
+      id: p.id,
+      label: p.label,
+      mc3,
+      mc4,
+      exitCost: p.exitCost,
+      drillAge,
+      drillTtl: DRILL_TTL,
+      drillFresh,
+      reason,
+    };
   });
   const passing = results.filter((r) => r.mc3 && r.mc4).length;
   const ar = act.length ? passing / act.length : 0;
@@ -118,6 +172,8 @@ function absorptionProber(eco) {
     agent: 'ABSORPTION-PROBER',
     condition: 'MC-3 / MC-4',
     ar: Number(ar.toFixed(3)),
+    drillTtl: DRILL_TTL,
+    oldestDrill: act.length ? Math.max(...act.map((p) => eco.epoch - p.exitDrillEpoch)) : 0,
     results,
     pass: ar >= 0.6,
   };
@@ -179,18 +235,35 @@ function indexer(eco, parts) {
   const ccr = Math.max(...loci.map((l) => l.capability / total));
 
   const n = Math.max(loci.length, 2);
-  const normLd = Math.max(0, Math.min(1, (lineage.ld - 1) / (n - 1)));
-  const normDhl = Math.max(0, Math.min(1, divergence.dhl / 365));
 
-  const mi =
-    WEIGHTS.ccr * (1 - ccr) +
-    WEIGHTS.ld * normLd +
-    WEIGHTS.dhl * normDhl +
-    WEIGHTS.ar * absorption.ar;
+  // Every term is published alongside the composite. A Multilarity Index
+  // reported by itself is unevidenced; so is one whose components cannot
+  // be recomputed by the reader.
+  const terms = {
+    ccr: Number((1 - ccr).toFixed(4)),
+    ld: Number(Math.max(0, Math.min(1, (lineage.ld - 1) / (n - 1))).toFixed(4)),
+    dhl: divergence.dhlTerm,
+    ar: Number(absorption.ar.toFixed(4)),
+  };
+
+  // An indicator with no observation is dropped and the surviving weights
+  // are renormalised, rather than contributing zero and quietly dragging
+  // the composite down as though it had been measured.
+  const used = Object.keys(terms).filter((k) => terms[k] !== null);
+  const wSum = used.reduce((s, k) => s + WEIGHTS[k], 0) || 1;
+  const appliedWeights = {};
+  let mi = 0;
+  for (const k of used) {
+    appliedWeights[k] = Number((WEIGHTS[k] / wSum).toFixed(4));
+    mi += appliedWeights[k] * terms[k];
+  }
 
   return {
     agent: 'INDEXER',
     ccr: Number(ccr.toFixed(3)),
+    // CCR admits more than one proxy. The composite uses capability-share;
+    // the coupling proxy is reported beside it and is not folded in.
+    ccrBasis: 'capability-share',
     ccrProxies: {
       'capability-share': Number(ccr.toFixed(3)),
       'share-of-couplings': Number(
@@ -198,10 +271,15 @@ function indexer(eco, parts) {
       ),
     },
     ld: lineage.ld,
-    dhl: divergence.dhl,
+    dhlDays: divergence.dhlDays,
+    dhlStatus: divergence.dhlStatus,
+    dhlHorizon: divergence.dhlHorizon,
     ar: absorption.ar,
     mi: Number(mi.toFixed(3)),
+    terms,
     weights: WEIGHTS,
+    appliedWeights,
+    omitted: Object.keys(terms).filter((k) => terms[k] === null),
     scope: 'scope:multilarity-web4:reference-ecology',
   };
 }
@@ -213,12 +291,18 @@ function pathologyWatch(eco, parts) {
   const { locus, lineage, divergence, interfaceW, provenance } = parts;
   const out = [];
 
-  if (lineage.ld < 2.5 || divergence.dhl < 120) {
+  const halfLifeShort =
+    divergence.dhlStatus === 'measured' && divergence.dhlDays < 120;
+  if (lineage.ld < 2.5 || halfLifeShort) {
+    const dhlText =
+      divergence.dhlStatus === 'measured'
+        ? `${divergence.dhlDays}d`
+        : `undefined (${divergence.dhlStatus})`;
     out.push({
       code: '7.1',
       name: 'Lineage collapse',
       defeats: 'MC-1',
-      detail: `Effective lineages ${lineage.ld}, divergence half-life ${divergence.dhl}d and ${divergence.trend}. Endpoint count is unchanged.`,
+      detail: `Effective lineages ${lineage.ld}, divergence half-life ${dhlText} and ${divergence.trend}. Endpoint count is unchanged.`,
       remediation: { kind: 'separate-lineage', target: null },
     });
   }
@@ -267,12 +351,25 @@ function pathologyWatch(eco, parts) {
     const b = h[h.length - 1];
     return b > a * 1.25 || b > 0.45;
   });
-  if (eroding.length) {
+  // A drill that is never re-run is the quietest way to lose MC-4: nothing
+  // about the ecology changes, the evidence simply ages out. Raised before
+  // expiry so that holding plurality open is visible as recurring work.
+  const stale = eco
+    .active()
+    .filter((p) => eco.epoch - p.exitDrillEpoch >= DRILL_WARN);
+
+  if (eroding.length || stale.length) {
     out.push({
       code: '7.5',
-      name: 'Consent erosion',
+      name: eroding.length ? 'Consent erosion' : 'Exit drill expiring',
       defeats: 'MC-4',
-      detail: `Disengagement cost rising for ${eroding.map((p) => p.label).join(', ')}. No exit path has been removed.`,
+      detail: eroding.length
+        ? `Disengagement cost rising for ${eroding.map((p) => p.label).join(', ')}. No exit path has been removed.`
+        : `Exit last exercised ${Math.max(
+            ...stale.map((p) => eco.epoch - p.exitDrillEpoch)
+          )} intervals ago for ${stale
+            .map((p) => p.label)
+            .join(', ')}. MC-4 expires at ${DRILL_TTL}. No exit path has been removed.`,
       remediation: { kind: 'exit-drill', target: null },
     });
   }
@@ -340,4 +437,4 @@ function runPipeline(eco, mode, queue) {
   };
 }
 
-module.exports = { runPipeline, WEIGHTS, LOCUS_DIMENSIONS };
+module.exports = { runPipeline, WEIGHTS, DRILL_TTL, DHL_HORIZON, LOCUS_DIMENSIONS };
