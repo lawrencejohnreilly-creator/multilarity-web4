@@ -23,6 +23,45 @@ function mulberry32(seed) {
   };
 }
 
+// ---------------------------------------------------------------
+// Capability is held in log space.
+//
+// Participants compound at different rates, so on a linear scale the
+// frontier leaves double precision entirely: at the observed rates the
+// values pass 1e308 and every ratio in the instrument becomes NaN while
+// the chain goes on committing. Storing the logarithm makes growth
+// additive and unbounded, and every indicator the agents compute is a
+// share or a ratio — dimensionless — so nothing downstream needs the
+// linear magnitude at all.
+//
+// The alternative of rescaling by the leader each interval is rejected
+// deliberately: the human locus is many orders below the frontier and
+// division would flush it to a denormal and then to zero, removing the
+// participant this framework cares most about for a reason that is
+// purely numerical. In log space its value stays finite and plottable
+// even when its share is legitimately zero. A zero share and an absent
+// participant are different facts and the representation keeps them apart.
+// ---------------------------------------------------------------
+function logSumExp(xs) {
+  if (!xs.length) return -Infinity;
+  const m = Math.max(...xs);
+  if (!isFinite(m)) return m;
+  let s = 0;
+  for (const x of xs) s += Math.exp(x - m);
+  return m + Math.log(s);
+}
+
+// Shares over a set of log values. Sums to 1 by construction and stays
+// exact when the spread is hundreds of orders of magnitude wide.
+function logShares(xs) {
+  if (!xs.length) return [];
+  const lse = logSumExp(xs);
+  if (!isFinite(lse)) return xs.map(() => 0);
+  return xs.map((x) => Math.exp(x - lse));
+}
+
+const LOG10 = Math.LN10;
+
 // The seven substantive dimensions of MC-1. Identifier distinctness
 // is deliberately not among them.
 const LOCUS_DIMENSIONS = [
@@ -163,9 +202,11 @@ function seedParticipants(rand) {
     },
   ];
 
-  return spec.map((s, i) => ({
+  return spec.map(({ capability, ...s }, i) => ({
     ...s,
     hue: i,
+    // Seeded in log space; the linear seed above is only a starting scale.
+    logCap: Math.log(capability),
     behaviour: Array.from({ length: BEHAVIOUR_DIMS }, () => rand() * 2 - 1),
     absorbed: false,
     absorbedBy: null,
@@ -218,7 +259,9 @@ class Ecology {
       id: g.id,
       members: g.members.map((m) => m.id),
       labels: g.members.map((m) => m.label),
-      capability: g.members.reduce((s, m) => s + m.capability, 0),
+      // Aggregated in log space: the sum of member capability is the
+      // log-sum-exp of their logs, never a sum of overflowing linears.
+      logCap: logSumExp(g.members.map((m) => m.logCap)),
       nominal: g.members.length,
     }));
   }
@@ -242,14 +285,25 @@ class Ecology {
   }
 
   frontierLeader() {
-    return this.active().reduce((a, b) => (b.capability > a.capability ? b : a));
+    return this.active().reduce((a, b) => (b.logCap > a.logCap ? b : a));
   }
 
   record() {
     this.history.push({
       epoch: this.epoch,
-      capability: Object.fromEntries(
-        this.participants.map((p) => [p.id, Number(p.capability.toFixed(3))])
+      // Recorded as decades. The plot reads this directly, so the axis
+      // is linear in orders of magnitude and the differing growth rates
+      // show up as differing slopes rather than as one curve and five
+      // flat lines pinned to the floor.
+      log10Cap: Object.fromEntries(
+        this.participants.map((p) => [p.id, Number((p.logCap / LOG10).toFixed(4))])
+      ),
+      share: Object.fromEntries(
+        (() => {
+          const act = this.active();
+          const sh = logShares(act.map((p) => p.logCap));
+          return act.map((p, i) => [p.id, Number(sh[i].toFixed(6))]);
+        })()
       ),
       distance: Number(this.meanPairwiseDistance().toFixed(4)),
     });
@@ -267,7 +321,10 @@ class Ecology {
 
     for (const p of this.active()) {
       const noise = (this.rand() - 0.5) * 0.004;
-      p.capability *= 1 + p.rate + noise;
+      // Compounding becomes addition. log1p rather than log(1 + x)
+      // because the per-interval rates are small and log1p keeps the
+      // precision there.
+      p.logCap += Math.log1p(p.rate + noise);
 
       for (let k = 0; k < BEHAVIOUR_DIMS; k++) {
         p.behaviour[k] += (this.rand() - 0.5) * 0.02;
@@ -308,7 +365,7 @@ class Ecology {
       case 'acquisition': {
         const target = act
           .filter((p) => p !== leader && p.id !== 'p-humanloop')
-          .sort((a, b) => a.capability - b.capability)[0];
+          .sort((a, b) => a.logCap - b.logCap)[0];
         if (!target) return 'No acquisition target available.';
         target.dims.controlAuthority = leader.dims.controlAuthority;
         target.dims.keyCustody = leader.dims.keyCustody;
@@ -387,24 +444,33 @@ class Ecology {
   }
 
   snapshot() {
+    const act = this.active();
+    const sh = logShares(act.map((x) => x.logCap));
+    const shareById = new Map(act.map((x, i) => [x.id, sh[i]]));
     return {
       epoch: this.epoch,
+      schema: 2,
       distillation: Number(this.distillation.toFixed(5)),
       participants: this.participants.map((p) => ({
         id: p.id,
         label: p.label,
         operator: p.operator,
         hue: p.hue,
-        capability: Number(p.capability.toFixed(2)),
+        // Linear capability is deliberately not emitted: past ~1e308 it
+        // is not representable, and no consumer of this API needs it.
+        logCapability: Number(p.logCap.toFixed(6)),
+        log10Capability: Number((p.logCap / LOG10).toFixed(4)),
         interfaceShare: Number(p.interfaceShare.toFixed(4)),
         exitCost: Number(p.exitCost.toFixed(4)),
         custodians: p.custodians,
         attestedBy: p.attestedBy,
         dims: { ...p.dims },
         absorbed: p.absorbed,
+        // The dimensionless form, which is what every indicator uses.
+        capabilityShare: Number((shareById.get(p.id) || 0).toFixed(6)),
       })),
     };
   }
 }
 
-module.exports = { Ecology, LOCUS_DIMENSIONS, BEHAVIOUR_DIMS };
+module.exports = { Ecology, LOCUS_DIMENSIONS, BEHAVIOUR_DIMS, logSumExp, logShares };
